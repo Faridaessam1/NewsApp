@@ -12,5 +12,8 @@ abstract class AppThemeManager{
   static ThemeData DarkMode = ThemeData(
     scaffoldBackgroundColor: AppColors.primaryColorDark,
 
+appBarTheme: AppBarTheme(
+  backgroundColor: AppColors.primaryColorDark
+),
   );
 }

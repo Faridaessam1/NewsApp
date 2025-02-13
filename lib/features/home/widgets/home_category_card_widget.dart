@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/categoryModel.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants/theme/app_colors.dart';
 import '../../../constants/theme/app_styles.dart';
+import '../../../provider/app_theme_provider.dart';
 
 class HomeCategoryCardWidget extends StatelessWidget {
   int index;
@@ -16,6 +18,8 @@ class HomeCategoryCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var ThemeProvider = Provider.of<AppThemeProvider>(context);
+
     return Stack(
         alignment:
             index % 2 == 0 ? Alignment.bottomRight : Alignment.bottomLeft,
@@ -38,7 +42,7 @@ class HomeCategoryCardWidget extends StatelessWidget {
             width: 170,
             height: 55,
             decoration: BoxDecoration(
-              color: AppColors.primaryColorLight.withOpacity(0.4),
+              color: ThemeProvider.appTheme == ThemeMode.light ? AppColors.primaryColorLight.withOpacity(0.5) : AppColors.primaryColorDark.withOpacity(0.5),
               borderRadius: BorderRadius.circular(50),
             ),
             child: Directionality(
@@ -53,7 +57,9 @@ class HomeCategoryCardWidget extends StatelessWidget {
                   Text(
                     "View All",
                     textAlign: TextAlign.center,
-                    style:AppStyles.W500Black24,
+                    style: ThemeProvider.appTheme == ThemeMode.light ? AppStyles.W500Black24 : AppStyles.W500Black24.copyWith(
+                      color: AppColors.primaryColorLight
+                    ),
                   ),
                   Container(
                     height: 55,
@@ -62,7 +68,7 @@ class HomeCategoryCardWidget extends StatelessWidget {
                       color: AppColors.primaryColorLight,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.arrow_forward_ios),
+                    child: Icon(Icons.arrow_forward_ios , ),
                   )
                 ],
               ),
