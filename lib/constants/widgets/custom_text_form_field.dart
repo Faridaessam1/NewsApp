@@ -49,7 +49,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       maxLines: widget.maxLines,
       minLines: widget.minLines,
       validator: widget.validator,
-      obscureText: widget.isPassword ?? false ? obscureText : false,
+      obscureText: widget.isPassword ? obscureText : false,
       obscuringCharacter: "*",
       decoration: InputDecoration(
         prefixIcon: widget.hasIcon && widget.iconPath != null
