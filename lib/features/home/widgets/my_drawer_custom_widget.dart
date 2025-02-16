@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import '../../../constants/routes/pages_route_name.dart';
 import '../../../constants/theme/app_styles.dart';
 import '../../../constants/widgets/custom_drop_down_menu.dart';
+import '../../../main.dart';
 import '../../../provider/app_language_provider.dart';
 import '../../../provider/app_theme_provider.dart';
+import '../../../provider/viewModel/home_view_model.dart';
 
 class MyDrawerCustomWidget extends StatefulWidget{
   @override
@@ -17,7 +18,9 @@ class _MyDrawerCustomWidgetState extends State<MyDrawerCustomWidget> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var languageProvider = Provider.of<AppLanguageProvider>(context);
-    var ThemeProvider = Provider.of<AppThemeProvider>(context);
+    var themeProvider = Provider.of<AppThemeProvider>(context);
+    var homeProvider = Provider.of<HomeViewModel>(context);
+
     return  Column(
       children: [
         Container(
@@ -50,12 +53,13 @@ class _MyDrawerCustomWidgetState extends State<MyDrawerCustomWidget> {
                   children: [
                     GestureDetector(
                       onTap: (){
-                        Navigator.pushNamed(context, PagesRouteName.home);
+                       navigatorKey.currentState!.pop();
+                       homeProvider.goToHome();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.home,
                             color: Colors.white,
                             size: 40,
@@ -68,7 +72,7 @@ class _MyDrawerCustomWidgetState extends State<MyDrawerCustomWidget> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 40,
                     ),
                     Text(
@@ -77,21 +81,19 @@ class _MyDrawerCustomWidgetState extends State<MyDrawerCustomWidget> {
                       AppStyles.W500Black20.copyWith(color: Colors.white),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: CustomDropdownMenu(
                         value: "Light",
                         dropdownColor: Colors.white,
                         // Ensure visibility
                         hintText: 'Choose Theme',
                         fontWeight: FontWeight.w400,
-                        options: ["Light", "Dark"],
+                        options: const ["Light", "Dark"],
                         onChange: (String? theme) {
-                          if(theme == ThemeProvider.appTheme ) return;
-
                           if (theme == AppLocalizations.of(context)!.light) {
-                            ThemeProvider.changeAppTheme(ThemeMode.light);
+                            themeProvider.changeAppTheme(ThemeMode.light);
                           } else {
-                            ThemeProvider.changeAppTheme(ThemeMode.dark);
+                            themeProvider.changeAppTheme(ThemeMode.dark);
                           }
 
                           setState(() {
@@ -101,21 +103,21 @@ class _MyDrawerCustomWidgetState extends State<MyDrawerCustomWidget> {
                       ),
                     ),
 
-                    SizedBox(height: 30,),
+                    const SizedBox(height: 30,),
                     Text(
                       AppLocalizations.of(context)!.language,
                       style:
                       AppStyles.W500Black20.copyWith(color: Colors.white),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: CustomDropdownMenu(
                         value: "English",
                         dropdownColor: Colors.white,
                         // Ensure visibility
                         hintText: 'Choose Language',
                         fontWeight: FontWeight.w400,
-                        options: ["English", "Arabic"],
+                        options: const ["English", "Arabic"],
                         onChange: (String? language) {
                           if(language == languageProvider.appLanguage ) return;
 
