@@ -1,16 +1,19 @@
-import 'package:flutter/gestures.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/features/home/widgets/news_card_widget.dart';
 import 'package:news_app/models/categoryModel.dart';
-import 'package:news_app/models/source_model.dart';
 import 'package:provider/provider.dart';
+import '../../../constants/theme/app_styles.dart';
+import '../../../constants/widgets/custom_elevated_button.dart';
+import '../../../models/articles_model.dart';
 import '../../../provider/app_theme_provider.dart';
 import '../../../provider/viewModel/home_view_model.dart';
 
 class SelectedCategoryView extends StatefulWidget {
   final CategoryDataModel selectedCategoryModel;
 
-  SelectedCategoryView({
+  const SelectedCategoryView({
+    super.key,
     required this.selectedCategoryModel
   });
 
@@ -64,15 +67,94 @@ class _SelectedCategoryViewState extends State<SelectedCategoryView> {
           ),
         ),
 
-        Expanded(child: ListView.separated(
-            itemBuilder: (context, index) => NewsCardWidget(index: _viewModel.selectedTabIndex,),
-            separatorBuilder: (context, index) => const SizedBox(height: 5,),
+        Expanded(
+            child: ListView.separated(
+            itemBuilder: (context, index) => GestureDetector(
+              onTap: () => showArticleDetails(context , _viewModel.articleList[index]!),
+                child: NewsCardWidget(index: index,)
+            ),
+            separatorBuilder: (context, index) => const SizedBox(height: 2,),
             itemCount:_viewModel.articleList.length,
             ),
         ),
       ],
     );
   }
+
+
+  void showArticleDetails(context, Article article) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 20 , left: 15 , right: 15),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(30)
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    width: double.infinity,
+                    height: 320,
+                    child: CachedNetworkImage(
+                      imageUrl: article.urlToImage,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  article.description,
+                  style: AppStyles.W500Black20.copyWith(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ),
+                Spacer(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomElevatedButton.text(
+                          text: "View Full Article",
+                          buttonColor: Colors.white,
+                          textColor: Colors.black,
+                        onPressed: (){
+                            _viewModel.launchUrlCustom(article.url);
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 }
 
 

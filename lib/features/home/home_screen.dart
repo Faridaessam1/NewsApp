@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/constants/theme/app_colors.dart';
+import 'package:news_app/constants/widgets/custom_text_form_field.dart';
 import 'package:news_app/features/home/widgets/home_view_widget.dart';
 import 'package:news_app/features/home/widgets/my_drawer_custom_widget.dart';
 import 'package:news_app/features/home/widgets/selected_category_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:news_app/network/api_network.dart';
 import 'package:news_app/provider/viewModel/home_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isSearching = false;
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ? AppColors.primaryColorLight
             : AppColors.primaryColorDark,
         centerTitle: true,
-        title: Text(
+        title: isSearching ?
+        CustomTextFormField(
+        hintText: "Search",
+        controller:searchController,
+    )
+            :Text(
           homeProvider.selectedCategory == null
               ? AppLocalizations.of(context)!.home
               : homeProvider.selectedCategory!.CategoryName,
@@ -39,17 +46,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: AppColors.primaryColorLight),
         ),
         actions: [
-          Icon(
-            Icons.search,
-            color: themeProvider.appTheme == ThemeMode.light
-                ? AppColors.primaryColorDark
-                : AppColors.primaryColorLight,
-            size: 35,
+          IconButton(
+         onPressed: () {
+           setState(() {
+             isSearching = !isSearching;
+             if (!isSearching) {
+               searchController.clear();
+             }
+           }
+           );
+         },
+            icon: Icon(Icons.search , size: 35,
+          color: themeProvider.appTheme == ThemeMode.light
+          ? AppColors.primaryColorDark
+          : AppColors.primaryColorLight,
+          ) ,
           ),
           SizedBox(width: 5,)
         ],
       ),
-      drawer: Drawer(
+      drawer:isSearching ? null : Drawer(
         child: MyDrawerCustomWidget(),
       ),
       body: homeProvider.selectedCategory == null
