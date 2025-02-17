@@ -5,6 +5,8 @@ import 'package:news_app/models/source_model.dart';
 import '../../constants/theme/app_assets.dart';
 import '../../models/categoryModel.dart';
 import '../../network/api_network.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class HomeViewModel extends ChangeNotifier{
   CategoryDataModel? _selectedCategory;
@@ -67,6 +69,7 @@ class HomeViewModel extends ChangeNotifier{
 
   void setSelectedSource(int index){
     _selectedTabIndex = index;
+    getAllArticles();
     notifyListeners();
     //callback btakhod el index bta3 kol tab
   }
@@ -110,6 +113,16 @@ Future<void> getAllArticles() async{
       return '${difference.inDays ~/ 365} years ago';
     }
   }
+
+
+  Future<void> launchUrlCustom(String urlString) async {
+    final Uri uri = Uri.parse(urlString);
+    if (!await launchUrl(uri, mode: LaunchMode.inAppWebView)) {
+      throw 'Could not launch $urlString';
+    }
+  }
+
+
 
 
 
