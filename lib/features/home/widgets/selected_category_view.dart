@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app/features/home/widgets/news_card_widget.dart';
 import 'package:news_app/models/categoryModel.dart';
 import 'package:provider/provider.dart';
+import '../../../constants/theme/app_colors.dart';
 import '../../../constants/theme/app_styles.dart';
 import '../../../constants/widgets/custom_elevated_button.dart';
 import '../../../models/articles_model.dart';
@@ -14,7 +15,7 @@ class SelectedCategoryView extends StatefulWidget {
 
   const SelectedCategoryView({
     super.key,
-    required this.selectedCategoryModel
+    required this.selectedCategoryModel,
   });
 
   @override
@@ -29,9 +30,8 @@ class _SelectedCategoryViewState extends State<SelectedCategoryView> {
     _viewModel = Provider.of<HomeViewModel>(context, listen: false);
     Future.wait([
       _viewModel.getAllSources(),
-    ]).then((value){
+    ]).then((value) {
       _viewModel.getAllArticles();
-
     });
     super.initState();
   }
@@ -39,71 +39,118 @@ class _SelectedCategoryViewState extends State<SelectedCategoryView> {
   @override
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<AppThemeProvider>(context);
-    return Column(
-      children: [
-        DefaultTabController(
-          length: _viewModel.sourceList.length,
-          child: Container(
-            color: Colors.transparent,
-            child: TabBar(
-              tabAlignment: TabAlignment.start,
-              isScrollable: true,
-              indicatorColor: themeProvider.appTheme == ThemeMode.dark ? Colors
-                  .white : Colors.black,
-              labelColor: themeProvider.appTheme == ThemeMode.dark ? Colors
-                  .white : Colors.black,
-              unselectedLabelColor: themeProvider.appTheme == ThemeMode.dark
-                  ? Colors.white
-                  : Colors.black,
-              labelStyle: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
+
+    return Container(
+      color: themeProvider.appTheme == ThemeMode.light
+          ? Colors.white
+          : Colors.black,
+      child: Column(
+        children: [
+          DefaultTabController(
+            length: _viewModel.sourceList.length,
+            child: Container(
+              color: Colors.transparent,
+              child: TabBar(
+                tabAlignment: TabAlignment.start,
+                isScrollable: true,
+                indicatorColor: themeProvider.appTheme == ThemeMode.dark
+                    ? AppColors.primaryColorLight
+                    : AppColors.primaryColorDark,
+                labelColor: themeProvider.appTheme == ThemeMode.dark
+                    ? AppColors.primaryColorLight
+                    : AppColors.primaryColorDark,
+                unselectedLabelColor: themeProvider.appTheme == ThemeMode.dark
+                    ? Colors.grey[400]
+                    : Colors.grey[600],
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
+                dividerColor: Colors.transparent,
+                tabs: _viewModel.sourceList
+                    .map((source) => Tab(text: source!.name))
+                    .toList(),
+                onTap: _viewModel.setSelectedSource,
               ),
-              dividerColor: Colors.transparent,
-              tabs: _viewModel.sourceList.map((source) =>
-                  Tab(text: source!.name)).toList(),
-              onTap: _viewModel.setSelectedSource, // btrg3le l index 3shan ageb el news
             ),
           ),
-        ),
-
-        Expanded(
+          Expanded(
             child: ListView.separated(
-            itemBuilder: (context, index) => GestureDetector(
-              onTap: () => showArticleDetails(context , _viewModel.articleList[index]!),
-                child: NewsCardWidget(index: index,)
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: () => showArticleDetails(
+                  context,
+                  _viewModel.articleList[index]!,
+                ),
+                child: NewsCardWidget(index: index),
+              ),
+              separatorBuilder: (context, index) => const SizedBox(height: 2),
+              itemCount: _viewModel.articleList.length,
             ),
-            separatorBuilder: (context, index) => const SizedBox(height: 2,),
-            itemCount:_viewModel.articleList.length,
-            ),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
-
   void showArticleDetails(context, Article article) {
+    var themeProvider = Provider.of<AppThemeProvider>(context, listen: false);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 20 , left: 15 , right: 15),
+          padding: const EdgeInsets.only(bottom: 20, left: 15, right: 15),
           child: Container(
+            height: MediaQuery.of(context).size.height * 0.75,
             decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(30)
+              color: themeProvider.appTheme == ThemeMode.light
+                  ? Colors.white
+                  : Colors.grey[900],
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(
+                color: themeProvider.appTheme == ThemeMode.light
+                    ? Colors.grey[300]!
+                    : Colors.grey[700]!,
+                width: 1,
+              ),
             ),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Close button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: themeProvider.appTheme == ThemeMode.light
+                              ? Colors.grey[200]
+                              : Colors.grey[800],
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: themeProvider.appTheme == ThemeMode.light
+                              ? Colors.black
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Image
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     width: double.infinity,
-                    height: 320,
+                    height: 250,
                     child: CachedNetworkImage(
                       imageUrl: article.urlToImage,
                       imageBuilder: (context, imageProvider) => Container(
@@ -114,39 +161,66 @@ class _SelectedCategoryViewState extends State<SelectedCategoryView> {
                           ),
                         ),
                       ),
-                      placeholder: (context, url) =>
-                          Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  article.description,
-                  style: AppStyles.W500Black20.copyWith(
-                    fontSize: 18,
-                    color: Colors.white,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
-                ),
-                Spacer(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomElevatedButton.text(
-                          text: "View Full Article",
-                          buttonColor: Colors.white,
-                          textColor: Colors.black,
-                        onPressed: (){
-                            _viewModel.launchUrlCustom(article.url);
-                        },
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(
+                          color: themeProvider.appTheme == ThemeMode.light
+                              ? AppColors.primaryColorDark
+                              : AppColors.primaryColorLight,
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[300],
+                        child: Icon(
+                          Icons.error,
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ),
-                  ],
-                )
+                  ),
+                ),
+                const SizedBox(height: 15),
+                // Title
+                Text(
+                  article.title,
+                  style: AppStyles.W500Black20.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: themeProvider.appTheme == ThemeMode.light
+                        ? Colors.black
+                        : Colors.white,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 10),
+                // Description
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      article.description ?? "No description available",
+                      style: AppStyles.W500Black20.copyWith(
+                        fontSize: 16,
+                        color: themeProvider.appTheme == ThemeMode.light
+                            ? Colors.grey[800]
+                            : Colors.grey[300],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Button
+                CustomElevatedButton.text(
+                  text: "View Full Article",
+                  buttonColor: themeProvider.appTheme == ThemeMode.light
+                      ? AppColors.primaryColorDark
+                      : AppColors.primaryColorLight,
+                  textColor: themeProvider.appTheme == ThemeMode.light
+                      ? Colors.white
+                      : Colors.black,
+                  onPressed: () {
+                    _viewModel.launchUrlCustom(article.url);
+                  },
+                ),
               ],
             ),
           ),
@@ -154,7 +228,4 @@ class _SelectedCategoryViewState extends State<SelectedCategoryView> {
       },
     );
   }
-
 }
-
-

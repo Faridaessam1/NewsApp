@@ -26,58 +26,70 @@ class _HomeScreenState extends State<HomeScreen> {
     var homeProvider = Provider.of<HomeViewModel>(context);
 
     return Scaffold(
+      backgroundColor: themeProvider.appTheme == ThemeMode.light
+          ? Colors.white
+          : Colors.black,
       appBar: AppBar(
         backgroundColor: themeProvider.appTheme == ThemeMode.light
             ? AppColors.primaryColorLight
             : AppColors.primaryColorDark,
         centerTitle: true,
-        title: isSearching ?
-        CustomTextFormField(
-        hintText: "Search",
-        controller:searchController,
-    )
-            :Text(
+        iconTheme: IconThemeData(
+          color: themeProvider.appTheme == ThemeMode.light
+              ? Colors.black
+              : AppColors.primaryColorLight,
+        ),
+        title: isSearching
+            ? CustomTextFormField(
+          hintText: "Search",
+          controller: searchController,
+        )
+            : Text(
           homeProvider.selectedCategory == null
               ? AppLocalizations.of(context)!.home
               : homeProvider.selectedCategory!.CategoryName,
           style: themeProvider.appTheme == ThemeMode.light
-              ? AppStyles.W500Black20
+              ? AppStyles.W500Black20.copyWith(color: Colors.white)
               : AppStyles.W500Black20.copyWith(
-                  color: AppColors.primaryColorLight),
+              color: AppColors.primaryColorLight),
         ),
         actions: [
           IconButton(
-         onPressed: () {
-           setState(() {
-             isSearching = !isSearching;
-             if (!isSearching) {
-               searchController.clear();
-             }
-           }
-           );
-         },
-            icon: Icon(Icons.search , size: 35,
-          color: themeProvider.appTheme == ThemeMode.light
-          ? AppColors.primaryColorDark
-          : AppColors.primaryColorLight,
-          ) ,
+            onPressed: () {
+              setState(() {
+                isSearching = !isSearching;
+                if (!isSearching) {
+                  searchController.clear();
+                }
+              });
+            },
+            icon: Icon(
+              Icons.search,
+              size: 35,
+              color: themeProvider.appTheme == ThemeMode.light
+                  ? Colors.white
+                  : AppColors.primaryColorLight,
+            ),
           ),
-          SizedBox(width: 5,)
+          const SizedBox(width: 5),
         ],
       ),
-      drawer:isSearching ? null : Drawer(
+      drawer: isSearching
+          ? null
+          : Drawer(
+        backgroundColor: themeProvider.appTheme == ThemeMode.light
+            ? Colors.black
+            : Colors.white,
         child: MyDrawerCustomWidget(),
       ),
       body: homeProvider.selectedCategory == null
           ? HomeViewWidget(
-              categories : homeProvider.categories,
-              onCategoryClicked: homeProvider.onCategoryClicked,
-            )
+        categories: homeProvider.categories,
+        onCategoryClicked: homeProvider.onCategoryClicked,
+      )
           : SelectedCategoryView(
-              selectedCategoryModel: homeProvider.selectedCategory!,
-            ),
+        selectedCategoryModel: homeProvider.selectedCategory!,
+      ),
     );
   }
-
-
 }

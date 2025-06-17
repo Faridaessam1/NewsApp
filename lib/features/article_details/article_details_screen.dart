@@ -8,14 +8,25 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../home/widgets/my_drawer_custom_widget.dart';
 
-
-class ArticleDetailsScreen extends StatelessWidget{
+class ArticleDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<AppThemeProvider>(context);
     var homeProvider = Provider.of<HomeViewModel>(context);
+
     return Scaffold(
+      backgroundColor: themeProvider.appTheme == ThemeMode.light
+          ? Colors.white
+          : Colors.black,
       appBar: AppBar(
+        backgroundColor: themeProvider.appTheme == ThemeMode.light
+            ? Colors.white
+            : Colors.black,
+        iconTheme: IconThemeData(
+          color: themeProvider.appTheme == ThemeMode.light
+              ? Colors.black
+              : Colors.white,
+        ),
         title: Text(
           homeProvider.selectedCategory == null
               ? AppLocalizations.of(context)!.home
@@ -27,9 +38,11 @@ class ArticleDetailsScreen extends StatelessWidget{
         ),
       ),
       drawer: Drawer(
+        backgroundColor: themeProvider.appTheme == ThemeMode.light
+            ? Colors.white
+            : Colors.black,
         child: MyDrawerCustomWidget(),
       ),
     );
   }
-
 }
