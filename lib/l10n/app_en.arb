@@ -2,6 +2,8 @@
 "home" : "Home",
   "goToHome" : "Go To Home",
   "goodMorning" : " Good Morning\n Here is Some News For You",
+  "goodAfternoon" : " Good Afternoon\n Here is Some News For You",
+  "goodEvening" : " Good Evening\n Here is Some News For You",
   "viewAll" : "View All",
   "theme" : "Theme",
   "language" : "Language",

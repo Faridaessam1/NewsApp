@@ -25,7 +25,7 @@ class HomeCategoryCardWidget extends StatelessWidget {
             index % 2 == 0 ? Alignment.bottomRight : Alignment.bottomLeft,
         children: [
           Container(
-            padding: EdgeInsets.all(3),
+            padding: const EdgeInsets.all(3),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: Image.asset(
@@ -35,7 +35,7 @@ class HomeCategoryCardWidget extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(
+            margin: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 20,
             ),
@@ -53,7 +53,7 @@ class HomeCategoryCardWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Text(
@@ -71,7 +71,7 @@ class HomeCategoryCardWidget extends StatelessWidget {
                       color: AppColors.primaryColorLight,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.arrow_forward_ios,
                     ),
                   )
